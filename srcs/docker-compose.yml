@@ -1,0 +1,40 @@
+services:
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb_container
+    environment:
+      - db_name=db_base
+      - db_user=thisisadmin
+      - db_pwd=thisisadminpassword
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  # nginx:
+  #   build:
+  #     context: ./requirements/nginx
+  #     dockerfile: Dockerfile
+  #   container_name: nginx_container
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - nginx_data:/var/www/html
+  #   depends_on:
+  #     - mariadb
+  #   restart: unless-stopped
+  #   networks:
+  #     - inception_network
+
+volumes:
+  mariadb_data:
+  # nginx_data:
+
+networks:
+  inception_network:
+    driver: bridge
