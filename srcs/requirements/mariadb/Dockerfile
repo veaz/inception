@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:11.11
 
 RUN apt-get update && apt-get install -y mariadb-server mariadb-client && \
     mkdir -p /run/mysqld && \
@@ -11,4 +11,5 @@ EXPOSE 3306
 
 # Iniciar MariaDB
 CMD ["bash", "/script.sh"]
-CMD ["mysqld", "--user=mysql"]
+CMD ["mysqld"]
+#CMD ["mariadb", "-u", "root", "-p", "12345"]

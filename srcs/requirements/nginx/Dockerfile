@@ -1,9 +1,9 @@
-FROM alpine:3.14
+FROM debian:11.11
 
-RUN apk update && apk nginx openssl
+RUN apt-get update && apt-get install -y nginx openssl
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 443
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

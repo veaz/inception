@@ -6,17 +6,17 @@ all: up
 
 # Construir y levantar contenedores
 up:
-	@echo "🚀 Levantando servicios con Docker Compose..."
+	@echo "🚀 Upping services with Docker Compose..."
 	docker-compose -f $(COMPOSE_FILE) up -d --build
 
 # Detener contenedores
 down:
-	@echo "🛑 Deteniendo servicios..."
+	@echo "🛑 Stopping services..."
 	docker-compose -f $(COMPOSE_FILE) down
 
 # Limpiar todo
 clean: down
-	@echo "🧹 Limpiando volúmenes y redes..."
+	@echo "🧹 Cleaning volumes and networks..."
 	docker-compose -f $(COMPOSE_FILE) down -v
 	docker system prune -af
 
@@ -34,5 +34,7 @@ mariadb-bash:
 nginx-bash:
 	docker-compose -f $(COMPOSE_FILE) exec nginx sh
 
+wordpress-bash:
+	docker-compose -f $(COMPOSE_FILE) exec wordpress bash
 
-.PHONY: all up down clean re logs mariadb-bash nginx-bash
+.PHONY: all up down clean re logs mariadb-bash nginx-bash wordpress-bash
