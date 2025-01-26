@@ -8,7 +8,7 @@ services:
       - "443:443"
     volumes:
       - wordpress_data:/var/www/html
-      - nginx_data_certs:/etc/nginx/ssl
+      # - nginx_data_certs:/etc/nginx/ssl
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
     depends_on:
@@ -45,6 +45,8 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       WP_SITE_URL: https://${DOMAIN_NAME}
+      WP_TITLE: "Mi Sitio WordPress"
+      WP_ADMIN_EMAIL: "admin@example.com"
     depends_on:
       - mariadb
     networks:
@@ -52,7 +54,7 @@ services:
     restart: always
   
 volumes:
-  nginx_data_certs:
+  # nginx_data_certs:
   mariadb_data:
   wordpress_data:
 
@@ -64,3 +66,5 @@ networks:
 # Implementarlo
 # 2 usuarios en la base de datos de wordpress
 # Los volumenes tienen que estar disponibles en /home/login/data
+# Wordpress ya tiene que esar configurado
+# login a database

@@ -6,9 +6,15 @@ RUN apt-get update && apt-get install -y \
     php7.4-curl \
     php7.4-xml \
     php7.4-mbstring \
+    mariadb-client \
     wget \
     unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Instalar WP-CLI
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
 # Crea el directorio para WordPress
 RUN mkdir -p /var/www/html
@@ -30,7 +36,10 @@ RUN chown -R www-data:www-data /var/www/html
 RUN mkdir -p /run/php && \
     chown www-data:www-data /run/php
 
+# Copiar script de inicialización
+COPY tools/init-wordpress.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/init-wordpress.sh
+
 EXPOSE 9000
 
-# Modifica el comando para usar la ruta completa
-CMD ["/usr/sbin/php-fpm7.4", "-F"]
+CMD ["/usr/local/bin/init-wordpress.sh"]
