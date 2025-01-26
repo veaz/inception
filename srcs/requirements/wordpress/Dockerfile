@@ -1,15 +1,36 @@
-FROM debian:11.11
+FROM debian:bullseye
 
-RUN apt-get update && apt-get -y install \
-    curl \
+RUN apt-get update && apt-get install -y \
     php7.4-fpm \
     php7.4-mysqli \
-    mariadb-client
+    php7.4-curl \
+    php7.4-xml \
+    php7.4-mbstring \
+    wget \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-    && chmod +x wp-cli.phar \
-    && mv wp-cli.phar /usr/local/bin/wp
+# Crea el directorio para WordPress
+RUN mkdir -p /var/www/html
 
-COPY script.sh /script.sh
+RUN wget https://wordpress.org/latest.zip -O /tmp/wordpress.zip && \
+    unzip /tmp/wordpress.zip -d /var/www/html && \
+    rm /tmp/wordpress.zip
 
-CMD ["/bin/bash", "/script.sh"]
+# Copia wp-config.php al directorio correcto
+COPY conf/wp-config.php /var/www/html/wordpress/wp-config.php
+
+# Copia la configuración de PHP-FPM
+COPY conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+
+# Cambia permisos
+RUN chown -R www-data:www-data /var/www/html
+
+# Crea el directorio para el socket y los logs
+RUN mkdir -p /run/php && \
+    chown www-data:www-data /run/php
+
+EXPOSE 9000
+
+# Modifica el comando para usar la ruta completa
+CMD ["/usr/sbin/php-fpm7.4", "-F"]

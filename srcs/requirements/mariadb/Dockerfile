@@ -1,15 +1,21 @@
-FROM debian:11.11
+# Debian 11
+FROM debian:bullseye
 
 RUN apt-get update && apt-get install -y mariadb-server mariadb-client && \
-    mkdir -p /run/mysqld && \
-    chown -R mysql:mysql /run/mysqld && \
-    mkdir -p /var/lib/mysql && \
+    mkdir -p /var/run/mysqld && \
+    chown -R mysql:mysql /var/run/mysqld /var/lib/mysql
+
+# Copiar el script de inicialización
+COPY script.sh /script.sh
+COPY tools/init.sql /init.sql
+
+# Inicializar la base de datos
+RUN chmod +x /script.sh && \
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql && \
     chown -R mysql:mysql /var/lib/mysql
 
 # Exponer el puerto de MariaDB
 EXPOSE 3306
 
-# Iniciar MariaDB
+# Iniciar MariaDB usando el script
 CMD ["bash", "/script.sh"]
-CMD ["mysqld"]
-#CMD ["mariadb", "-u", "root", "-p", "12345"]
