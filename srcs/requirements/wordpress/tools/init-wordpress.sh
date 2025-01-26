@@ -1,51 +1,51 @@
 #!/bin/bash
 
-echo "🚀 Iniciando script de WordPress..."
+echo "🚀 Starting WordPress initialization script..."
 
-# Esperar a que MariaDB esté disponible
-echo "⌛ Esperando a que MariaDB esté disponible..."
+# Wait for MariaDB to be available
+echo "⌛ Waiting for MariaDB to be available..."
 max_attempts=30
 attempt=1
 
 while [ $attempt -le $max_attempts ]; do
     if mysql -h mariadb -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" "${MYSQL_DATABASE}" -e "SELECT 1" &>/dev/null; then
-        echo "✅ Conexión a MariaDB establecida"
+        echo "✅ MariaDB connection established"
         break
     fi
-    echo "⏳ Intento $attempt de $max_attempts - Esperando a MariaDB..."
+    echo "⏳ Attempt $attempt of $max_attempts - Waiting for MariaDB..."
     sleep 5
     attempt=$((attempt + 1))
 done
 
 if [ $attempt -gt $max_attempts ]; then
-    echo "❌ Error: No se pudo conectar a MariaDB después de $max_attempts intentos"
+    echo "❌ Error: Could not connect to MariaDB after $max_attempts attempts"
     exit 1
 fi
 
 cd /var/www/html/wordpress
 echo "📂 Directorio actual: $(pwd)"
 
-# Configurar permisos
-echo "🔧 Configurando permisos..."
+# Configure permissions
+echo "🔧 Configuring permissions..."
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
-echo "✅ Permisos configurados"
+echo "✅ Permissions configured"
 
 # Crear wp-config.php si no existe
 if [ ! -f wp-config.php ]; then
-    echo "📝 Creando wp-config.php..."
+    echo "📝 Creating wp-config.php..."
     wp config create \
         --dbname="${MYSQL_DATABASE}" \
         --dbuser="${MYSQL_USER}" \
         --dbpass="${MYSQL_PASSWORD}" \
         --dbhost=mariadb \
         --allow-root
-    echo "✅ wp-config.php creado"
+    echo "✅ wp-config.php created"
 fi
 
 # Instalar WordPress si no está instalado
 if ! wp core is-installed --allow-root; then
-    echo "🔧 Instalando WordPress..."
+    echo "🔧 Installing WordPress..."
     
     # Instalar WordPress
     wp core install \
@@ -57,21 +57,21 @@ if ! wp core is-installed --allow-root; then
         --skip-email \
         --allow-root
     
-    echo "👤 Creando usuario secundario..."
+    echo "👤 Creating secondary user..."
     # Crear usuario secundario
     wp user create "${WP_USER}" "${WP_USER_EMAIL}" \
         --role=author \
         --user_pass="${WP_USER_PASSWORD}" \
         --allow-root
 
-    echo "✅ WordPress instalado con éxito"
-    echo "🔑 Credenciales de administrador:"
-    echo "   Usuario: ${WP_ADMIN_USER}"
-    echo "   Contraseña: ${WP_ADMIN_PASSWORD}"
-    echo "🔑 Credenciales de usuario secundario:"
-    echo "   Usuario: ${WP_USER}"
-    echo "   Contraseña: ${WP_USER_PASSWORD}"
+    echo "✅ WordPress installed successfully"
+    echo "🔑 Admin credentials:"
+    echo "   Username: ${WP_ADMIN_USER}"
+    echo "   Password: ${WP_ADMIN_PASSWORD}"
+    echo "🔑 Secondary user credentials:"
+    echo "   Username: ${WP_USER}"
+    echo "   Password: ${WP_USER_PASSWORD}"
 fi
 
-echo "🚀 Iniciando PHP-FPM..."
+echo "🚀 Starting PHP-FPM..."
 exec php-fpm7.4 -F 

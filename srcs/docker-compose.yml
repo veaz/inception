@@ -8,7 +8,6 @@ services:
       - "443:443"
     volumes:
       - wordpress_data:/var/www/html
-      # - nginx_data_certs:/etc/nginx/ssl
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
     depends_on:
@@ -59,7 +58,6 @@ services:
     restart: always
   
 volumes:
-  # nginx_data_certs:
   mariadb_data:
   wordpress_data:
 
