@@ -17,6 +17,9 @@ RUN wget https://wordpress.org/latest.zip -O /tmp/wordpress.zip && \
     unzip /tmp/wordpress.zip -d /var/www/html && \
     rm /tmp/wordpress.zip
 
+# Copia wp-config.php al directorio correcto
+COPY conf/wp-config.php /var/www/html/wordpress/wp-config.php
+
 # Copia la configuración de PHP-FPM
 COPY conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
 

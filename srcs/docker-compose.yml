@@ -3,52 +3,43 @@ services:
   nginx:
     build:
       context: ./requirements/nginx
-      # dockerfile: Dockerfile
     container_name: nginx
     ports:
       - "443:443"
     volumes:
-      - nginx_data_html:/var/www/html
-      - nginx_data_certs:/etc/nginx/certs
+      - wordpress_data:/var/www/html
+      - nginx_data_certs:/etc/nginx/ssl
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
     depends_on:
       - wordpress
     networks:
       - inception_network
+    restart: always
 
   mariadb:
     build:
       context: ./requirements/mariadb
-      # dockerfile: Dockerfile
     container_name: mariadb
     environment:
-      # - db_name=db_base
-      # - db_user=thisisadmin
-      # - db_pwd=thisisadminpassword
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      # - mariadb_data:/var/lib/mysql
-      # - ./data/mariadb:/var/lib/mysql
-        - mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     ports:
-    # Este puerto creo que no se tiene que exponer
       - "3306:3306"
-    # restart: unless-stopped
     networks:
       - inception_network
+    restart: always
 
   wordpress:
     build:
       context: ./requirements/wordpress
     container_name: wordpress
     volumes:
-      # - ./data/wordpress:/var/www/html
       - wordpress_data:/var/www/html
-
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
@@ -58,13 +49,12 @@ services:
       - mariadb
     networks:
       - inception_network
-
+    restart: always
+  
 volumes:
-  nginx_data_html:
   nginx_data_certs:
   mariadb_data:
   wordpress_data:
-  # nginx_data:
 
 networks:
   inception_network:
@@ -72,4 +62,5 @@ networks:
 
 
 # Implementarlo
-# restart: always (?)
+# 2 usuarios en la base de datos de wordpress
+# Los volumenes tienen que estar disponibles en /home/login/data
