@@ -63,5 +63,7 @@ mariadb-show-databases:
 nginx-bash:
 	docker compose -f $(COMPOSE_FILE) exec nginx sh
 
+wordpress-bash:
+	docker compose -f $(COMPOSE_FILE) exec wordpress bash
 
-.PHONY: all up down clean re logs mariadb-bash nginx-bash
+.PHONY: all up down clean re logs mariadb-bash nginx-bash wordpress-bash

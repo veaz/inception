@@ -1,8 +1,18 @@
 # Debian 11
 FROM debian:bullseye
 
-RUN apt-get update && apt-get install -y mariadb-server mariadb-client && \
-    mkdir -p /var/run/mysqld && \
+RUN apt-get update && apt-get install -y \
+    mariadb-server \
+    mariadb-client \
+    net-tools \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configurar MariaDB para escuchar en todas las interfaces
+RUN echo "[mysqld]\nbind-address = 0.0.0.0\nport = 3306\n" > /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# Crear directorios necesarios
+RUN mkdir -p /var/run/mysqld && \
     chown -R mysql:mysql /var/run/mysqld /var/lib/mysql
 
 # Copiar el script de inicialización
