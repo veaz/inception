@@ -63,13 +63,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /Users/vaguilar/Documents/testDATA/mariadb
+      device: /home/vaguilar/data/mariadb
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /Users/vaguilar/Documents/testDATA/wordpress
+      device: /home/vaguilar/data/wordpress
 
 networks:
   inception_network:
