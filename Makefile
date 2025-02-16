@@ -72,7 +72,7 @@ decrypt-env:
 	@openssl enc -aes-256-cbc -pbkdf2 -d -in srcs/.env.encrypted -out srcs/.env -k $(PASSWORD)
 	@echo "✅ Decrypted file saved as srcs/.env"
 
-# Nuevo comando para reiniciar sin perder datos
+# Reiniciar servicios sin perder datos
 restart:
 	@echo "🔄 Reiniciando servicios..."
 	docker compose -f $(COMPOSE_FILE) down
