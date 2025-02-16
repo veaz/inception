@@ -1,6 +1,10 @@
-FROM alpine:3.20.5
+FROM debian:bullseye
 
-RUN apk update && apk add --no-cache nginx openssl
+# Actualizamos e instalamos nginx y openssl
+RUN apt-get update && apt-get install -y \
+    nginx \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create directory for SSL certificates
 RUN mkdir -p /etc/nginx/ssl

@@ -2,6 +2,12 @@
 
 echo "🚀 Starting WordPress initialization script..."
 
+# Verificar permisos y directorios
+echo "🔧 Verificando permisos y directorios..."
+mkdir -p /run/php
+chown -R www-data:www-data /run/php /var/www/html
+chmod 755 /run/php
+
 # Wait for MariaDB to be available
 echo "⌛ Waiting for MariaDB to be available..."
 max_attempts=30
@@ -25,11 +31,11 @@ fi
 cd /var/www/html/wordpress
 echo "📂 Directorio actual: $(pwd)"
 
-# Configure permissions
-echo "🔧 Configuring permissions..."
+# Mejorar la configuración de permisos
+echo "🔧 Configurando permisos avanzados..."
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
 chown -R www-data:www-data /var/www/html
-chmod -R 755 /var/www/html
-echo "✅ Permissions configured"
 
 # Crear wp-config.php si no existe
 if [ ! -f wp-config.php ]; then
@@ -71,7 +77,18 @@ if ! wp core is-installed --allow-root; then
     echo "🔑 Secondary user credentials:"
     echo "   Username: ${WP_USER}"
     echo "   Password: ${WP_USER_PASSWORD}"
+
+    # Verificar y activar el tema por defecto
+    wp theme activate twentytwentyone --allow-root || true
+
+    # Limpiar caché
+    wp cache flush --allow-root || true
 fi
 
+# Antes de iniciar PHP-FPM, verificar la configuración
+echo "🔍 Verificando configuración de PHP-FPM..."
+php-fpm7.4 -t
+
+# Iniciar PHP-FPM con más verbosidad
 echo "🚀 Starting PHP-FPM..."
-exec php-fpm7.4 -F 
+exec php-fpm7.4 -F -R 

@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y \
     php7.4-curl \
     php7.4-xml \
     php7.4-mbstring \
+    php7.4-zip \
+    php7.4-gd \
+    php7.4-intl \
+    php7.4-soap \
     mariadb-client \
     wget \
     unzip \
@@ -29,12 +33,10 @@ COPY conf/wp-config.php /var/www/html/wordpress/wp-config.php
 # Copy PHP-FPM configuration
 COPY conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
 
-# Change permissions
-RUN chown -R www-data:www-data /var/www/html
-
 # Create directory for socket and logs
 RUN mkdir -p /run/php && \
-    chown www-data:www-data /run/php
+    chown -R www-data:www-data /var/www/html /run/php && \
+    chmod 755 /run/php
 
 # Copy initialization script
 COPY tools/init-wordpress.sh /usr/local/bin/
