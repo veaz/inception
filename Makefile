@@ -39,8 +39,8 @@ clean: down
 
 re: clean all
 
-logs:
-	docker compose -f $(COMPOSE_FILE) logs -f
+# logs:
+# 	docker compose -f $(COMPOSE_FILE) logs -f
 
 
 # Access to containers
@@ -60,6 +60,16 @@ mariadb-show-tables:
 mariadb-show-databases:
 	docker compose -f $(COMPOSE_FILE) exec mariadb mysql -u $(MYSQL_USER) -p$(MYSQL_PASSWORD) -e "SHOW DATABASES;"
 
+# Encriptar archivo .env
+encrypt-env:
+	@echo "🔒 Encrypting .env file..."
+	@openssl enc -aes-256-cbc -pbkdf2 -salt -in srcs/.env -out srcs/.env.encrypted -k $(PASSWORD)
+	@echo "✅ Encrypted file saved as srcs/.env.encrypted"
 
+# Desencriptar archivo .env
+decrypt-env:
+	@echo "🔓 Decrypting .env file..."
+	@openssl enc -aes-256-cbc -pbkdf2 -d -in srcs/.env.encrypted -out srcs/.env -k $(PASSWORD)
+	@echo "✅ Decrypted file saved as srcs/.env"
 
 .PHONY: all up down clean re logs mariadb-bash nginx-bash wordpress-bash
